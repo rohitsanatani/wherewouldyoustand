@@ -3,15 +3,16 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const Response = require('./models/response');
 const bp = require('body-parser');
+require('dotenv').config();
 
 // express app
 const app = express();
 
 // connect to mongodb & listen for requests
-const dbURI = "mongodb+srv://rohitsanatani:rohit1992@cluster0.otwws.mongodb.net/subwaydata?retryWrites=true&w=majority";
-
+//const dbURI = "mongodb+srv://rohitsanatani:rohit1992@cluster0.otwws.mongodb.net/subwaydata?retryWrites=true&w=majority";
+const dbURI = process.env.ATLAS_SRV;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(result => app.listen(3000))
+  .then(result => app.listen(process.env.PORT||3000))
   .catch(err => console.log(err));
 
 // register view engine

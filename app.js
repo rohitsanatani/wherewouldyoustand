@@ -9,7 +9,6 @@ require('dotenv').config();
 const app = express();
 
 // connect to mongodb & listen for requests
-//const dbURI = "mongodb+srv://rohitsanatani:rohit1992@cluster0.otwws.mongodb.net/subwaydata?retryWrites=true&w=majority";
 const dbURI = process.env.ATLAS_SRV;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(result => app.listen(process.env.PORT||3000))

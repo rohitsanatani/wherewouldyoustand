@@ -55,9 +55,8 @@ function preload (){
 
 function setup()
 {
-
   //fullScreen();
-  createCanvas(1550, 800);
+  createCanvas(1530, 800);
   back = loadImage("assets/back.png");
   background(255);
 
@@ -112,13 +111,13 @@ function draw()
     fill(0);
     textSize(50);
     textAlign(CENTER);
-    text("The Subway Game!", width/2, 0.2*height);
+    text("The Subway Game!", width/2, 0.1*height);
 
     //display intro
     fill(0);
     textSize(25);
     textAlign(CENTER);
-    text("You enter a subway coach, tired after a hard day's work. All seats are occupied.\n Where would want to stand, so you could grab a seat soon?", width/2, 0.3*height);
+    text("You enter a subway coach, tired after a hard day's work. All seats are occupied.\n Where would want to stand, so you could grab a seat soon?", width/2, 0.2*height);
 
     //draw plan
     imageMode(CORNER);
@@ -142,13 +141,13 @@ function draw()
     fill(0);
     textSize(30);
     textAlign(CENTER);
-    text("To begin, type your name and hit Enter", width/2, 0.7*height);
+    text("To begin, type your name and hit Enter", width/2, 0.8*height);
 
     //display name
     fill(0);
     textSize(30);
     textAlign(CENTER);
-    text(userName, width/2, 0.8*height);
+    text(userName, width/2, 0.9*height);
   }
 
   //mainLoop
@@ -166,14 +165,14 @@ function draw()
     fill(0);
     textSize(50);
     textAlign(CENTER);
-    text("The Subway Game!", width/2, 0.2*height);
+    text("The Subway Game!", width/2, 0.1*height);
 
 
     //display intro
     fill(0);
     textSize(25);
     textAlign(CENTER);
-    text("Each of the images below depict a configuration of co-passengers in your subway coach. \n\n Click on the position where you would want to stand to maximize your chances of getting a seat.", width/2, 0.3*height);
+    text("Each of the images below depict a configuration of co-passengers in your subway coach. \n\n Click on the position where you would want to stand to maximize your chances of getting a seat.", width/2, 0.2*height);
 
 
     //display time prompt
@@ -184,7 +183,7 @@ function draw()
     textSize(25);
     textAlign(CENTER);
     remTime = timer-(millis()-startTime)/1000;
-    text("Do not give yourself more than 10s per image. \n Time remaining: "+Math.ceil(remTime).toString(), width/2, 0.7*height);
+    text("Do not give yourself more than 10s per image. \n Time remaining: "+Math.ceil(remTime).toString(), width/2, 0.75*height);
 
     textSize(25);
     textAlign(CENTER);

@@ -46,14 +46,19 @@ app.get('/results', (req, res) => {
 */
 
 app.get('/results', (req, res) => {
+      res.render('results', {thisGameId: req.query.gameId, title: 'Results' });
+    });
+
+
+app.get('/testget', (req, res) => {
   Response.find().then(result => {
-      res.render('results', { allData: result, thisGameId: req.query.gameId, title: 'Results' });
-      //console.log(result);
+      return res.send({allData:result})
     })
     .catch(err => {
       console.log(err);
     });
 });
+
 
 app.get('/testpost', (req, res) => {
   const response = new Response(

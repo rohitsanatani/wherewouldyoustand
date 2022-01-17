@@ -234,7 +234,7 @@ function draw()
     nDoors = row.getNum("nDoors");
 
     //get rowId
-    rowId = row.getNum("id");
+    rowId = row.getNum("sceneId");
   }
 }
 
@@ -245,7 +245,7 @@ function mouseClicked() {
     //
     newRow = userData.addRow();
     newRow.setNum("sceneId", rowId);
-    newRow.setNum("sceneCount", count);
+    newRow.setNum("sceneCount", count+1);
     newRow.setString("dataset", fileName);
     newRow.setString("userName", userName);
     newRow.setString("gameId", gameId);
@@ -267,7 +267,7 @@ function mouseClicked() {
 
     //update data lists:
     sceneIdData.push(rowId)
-    sceneCountData.push(count);
+    sceneCountData.push(count+1);
     datasetData.push(fileName);
     userNameData.push(userName);
     gameIdData.push(gameId);

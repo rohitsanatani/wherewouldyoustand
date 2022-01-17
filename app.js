@@ -50,9 +50,9 @@ app.get('/results', (req, res) => {
     });
 
 
-app.get('/testget', (req, res) => {
-  Response.find().then(result => {
-      return res.send({allData:result})
+app.get('/getgamedata', (req, res) => {
+  Response.find({gameId: req.query.gameId}).sort({sceneId: 1}).then(result => {
+      return res.send({gameUserData:result})
     })
     .catch(err => {
       console.log(err);

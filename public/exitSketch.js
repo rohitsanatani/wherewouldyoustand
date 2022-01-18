@@ -58,26 +58,32 @@ function draw()
 
     //draw plan
     imageMode(CORNER);
-    image(plan, xOffset, yOffset);
+    //image(plan, xOffset, yOffset);
 
     //display title
-    //fill(textColor);
-    fill(accentColor);
     textFont("Courier New");
-    textStyle(NORMAL);
-    textSize(40);
+    fill(accentColor);
+    textSize(titleTextSize);
     textAlign(CENTER);
     text("Where Would You Stand On The Subway?", width/2, 0.1*height);
 
+    //display text
+    fill(textColor);
+    textFont("Courier New");
+    textStyle(NORMAL);
+    textSize(25);
+    textAlign(CENTER);
+    text("From a 'rational' point of view, your chances of getting a seat depends most strongly on\nthe number of seats you are closest to (S).\n\nHowever in real life, our decisions are dictated by (P) and (D) as well.", width/2, 0.3*height);
+    text("Hopefully this'll make us reflect on our intuitive decisions \nthe next time we are on the subway!", width/2, 0.6*height);
 
     //display intro
     fill(textColor);
     textSize(bodyTextSize);
     textAlign(CENTER);
-    text("When was the last time you walked into a crowded subway coach, tired after a long day, and \n lost a seat to someone who was more strategically positioned? \n\n Well, turns out, we seldom make the most rational decisions in this regard.", width/2, 0.2*height);
-    text("Play this quick game to find out why, and how predictable your intuitive decisions are!", width/2, 0.75*height);
-    fill(accentColor);
-    text(" Hit 'ENTER' to proceed", width/2, 0.85*height);
+   
+   // text("Thanks! Hopefully you'll take reflect on your intuitive decisions the next time you are on the subway!", width/2, 0.5*height);
+    
+/*
     row = gameData.getRow(demoRow);
 
     //draw compPoints
@@ -149,14 +155,7 @@ function draw()
     agentX = agentX + stepX;
     agentY = agentY + stepY;
     stepY = 0;
-      
+     */ 
   }
 
-
-function keyPressed() {
-
-    if (key=='Enter') {
-      window.location.href = "/play";
-    } 
-  }
 

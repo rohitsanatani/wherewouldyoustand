@@ -35,6 +35,7 @@ let timer = 10;
 let compColor = 200;
 let agentColor = 'red';
 let textColor = 255;
+let accentColor = '#ff4040'
 let titleTextSize = 40;
 let bodyTextSize = 20;
 
@@ -115,7 +116,7 @@ function draw()
     //display title
     //myFont = createFont("consolas", 32);
     textFont("Courier New");
-    fill(textColor);
+    fill(accentColor);
     textSize(titleTextSize);
     textAlign(CENTER);
     text("Where Would You Stand On The Subway?", width/2, 0.1*height);
@@ -124,8 +125,9 @@ function draw()
     fill(textColor);
     textSize(bodyTextSize);
     textAlign(CENTER);
-    text("You enter a subway coach, tired after a hard day's work. All seats are occupied.\n Where would want to stand, so you could grab a seat soon?", width/2, 0.2*height);
-    text("You will be presented with multiple co-passenger configurations. \n For each scene, click on your preffered standing position anywhere within the coach.", width/2, 0.3*height);
+    text("If all seats in a coach are occupied, where would want to stand, so you could grab a seat soon?", width/2, 0.2*height);
+    text("You will be presented with multiple co-passenger configurations as shown below. \n For each scene, click on your preffered standing position anywhere within the coach. \n Try not to spend more than 10s per scene.", width/2, 0.25*height);
+    
     //draw plan
     imageMode(CORNER);
     image(plan, xOffset, yOffset);
@@ -163,7 +165,7 @@ function draw()
     }
 
     //display name prompt
-    fill(textColor);
+    fill(accentColor);
     textSize(bodyTextSize);
     textAlign(CENTER);
     text("To begin, type your name and hit Enter", width/2, 0.7*height);
@@ -187,7 +189,7 @@ function draw()
     image(plan, xOffset, yOffset);
 
     //display title
-    fill(textColor);
+    fill(accentColor);
     textSize(titleTextSize);
     textAlign(CENTER);
     text("Where Would You Stand On The Subway?", width/2, 0.1*height);
@@ -201,15 +203,25 @@ function draw()
 
 
     //display time prompt
-    fill(textColor);
-    if (timer-((millis()-startTime)/1000)<=3) {
-      fill('red');
+    
+    if (timer-((millis()-startTime)/1000)>0){
+      fill(textColor);
+      if (timer-((millis()-startTime)/1000)<=3) {
+        fill('red');
+      }
+      textSize(bodyTextSize);
+      textAlign(CENTER);
+      remTime = timer-(millis()-startTime)/1000;
+      text("Do not give yourself more than 10s per image. \n Time remaining: "+Math.ceil(remTime).toString(), width/2, 0.75*height);
+    }else{
+      fill('red')
+      textSize(bodyTextSize);
+      textAlign(CENTER);
+      remTime = timer-(millis()-startTime)/1000;
+      text("Time up. Please click now.", width/2, 0.75*height);
     }
-    textSize(bodyTextSize);
-    textAlign(CENTER);
-    remTime = timer-(millis()-startTime)/1000;
-    text("Do not give yourself more than 10s per image. \n Time remaining: "+Math.ceil(remTime).toString(), width/2, 0.75*height);
 
+    fill(textColor);
     textSize(25);
     textAlign(CENTER);
     text((count+1).toString()+" / "+ (gameData.getRowCount().toString()), width/2, 0.9*height);

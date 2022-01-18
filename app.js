@@ -50,6 +50,10 @@ app.get('/results', (req, res) => {
       res.render('results', {thisGameId: req.query.gameId, title: 'Results' });
     });
 
+app.get('/exit', (req, res) => {
+  res.render('exit', {title: 'Thank You!' });
+});
+
 
 app.get('/getgamedata', (req, res) => {
   Response.find({gameId: req.query.gameId}).sort({sceneId: 1}).then(result => {

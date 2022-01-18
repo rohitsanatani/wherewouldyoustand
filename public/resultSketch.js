@@ -20,8 +20,8 @@ let allUserData;
 let gameUserData;
 let sceneData;
 let gameOn = false;
-let plotHeatMap = false;
-let plotUserPoints = true;
+let plotHeatMap = true;
+let plotUserPoints = false;
 let plotModelPoints = false;
 //let resultGameId = "rohit191546";
 let resultGameId = thisGameId;
@@ -42,17 +42,22 @@ let closestPlayers = [];
 let playerFreq = [];
 let closestSeats = [];
 let allPointScore;
+let userScoreScaled;
 let pointsModel = [];
 
 let compColor = 200;
 let agentColor = 'red';
 let textColor = 255;
+let accentColor = '#ff4040'
 let titleTextSize = 40;
 let bodyTextSize = 20;
+
+let heatMapMode;
 
 function preload (){
 
   plan = loadImage("assets/plan_1.png");
+  paramPlan = loadImage("assets/params.png");
   //load all user data and scene data
   allUserData = loadTable(dataFilePath, "csv", "header");
   sceneData = loadTable(sceneFilePath, "csv", "header");
@@ -61,6 +66,11 @@ function preload (){
 
 function setup()
 {
+  freqWeight = 2;
+  distWeight = .75;
+  doorWeight = .25;
+  heatMapMode = 'bayes';
+
   createCanvas(1530, 850);
   back = loadImage("assets/back.png");
   background(255);
@@ -80,7 +90,7 @@ function draw()
     image(back, width/2, height/2);
     //display title
     textFont("Courier New");
-    fill(textColor);
+    fill(accentColor);
     textSize(titleTextSize);
     textAlign(CENTER);
     text("Where Would You Stand On The Subway?", width/2, 0.1*height);
@@ -89,13 +99,24 @@ function draw()
     fill(textColor);
     textSize(bodyTextSize);
     textAlign(CENTER);
-    text("Great! Now let's see how predictable (and 'rational') your decisions were!\n \n Hit Enter to continue...", width/2, 0.2*height);
+    text("Great! Now let's see how predictable (and 'rational') your decisions were!\n\nBased on past data, 3 parameters have been found to influence positioning choices:\n\nNumber of seats closest to (S)\nDistance from nearest co-passenger (P)\nProximity to nearest door (D)", width/2, 0.175*height);
+
+    //draw plan
+    imageMode(CENTER);
+    image(paramPlan, width/2, height/2);
 
     //display name
     fill(textColor);
     textSize(bodyTextSize);
     textAlign(CENTER);
-    text(resultGameId, width/2, 0.6*height);
+    //text("From a 'rational' point of view, your chances of getting a seat depends most strongly on\nthe number of seats you are closest to (S).\nHowever in real life, our decisions are dictated by (P) and (D) as well.\n\nIn the following section, you will be able to evaluate your choices against each of these parameters.\nIn additon, we have also constructed a model based on past data.", width/2, 0.65*height);
+    text("In the following section, you will be able to evaluate your choices against each of these parameters.\nIn additon, we have also constructed a model based on past data.", width/2, 0.7*height);
+
+    //display name
+    fill(accentColor);
+    textSize(bodyTextSize);
+    textAlign(CENTER);
+    text("Hit Enter to evaluate your choices.\nYour GameId: "+resultGameId, width/2, 0.85*height);
   }
 
   //mainLoop
@@ -112,7 +133,7 @@ function draw()
     image(plan, xOffset, yOffset);
 
     //display title
-    fill(textColor);
+    fill(accentColor);
     textSize(titleTextSize);
     textAlign(CENTER);
     text("Where Would You Stand on the Subway?", width/2, 0.1*height);
@@ -121,7 +142,7 @@ function draw()
     fill(textColor);
     textSize(bodyTextSize);
     textAlign(CENTER);
-    text("Take a look at how your choices compared with past players. \n The heatmap indicates areas which actually correspond to high chances of getting a seat", width/2, 0.2*height);
+    text("Toggle the different heatmap modes to evaluate your decisions! \n Also compare your positioning choices with data from past players.", width/2, 0.2*height);
 
     //create heatmap
     if (plotHeatMap) {
@@ -179,19 +200,46 @@ function draw()
 
     //draw thisUserPoints
 
-      fill(agentColor);
-      stroke(agentColor);
+    fill(agentColor);
+    stroke(agentColor);
 
-      ellipse(int(gameUserData[count].userX)+xOffset, int(gameUserData[count].userY)+yOffset, agentSize, agentSize);
+    ellipse(int(gameUserData[count].userX)+xOffset, int(gameUserData[count].userY)+yOffset, agentSize, agentSize);
 
-      noStroke();
+    noStroke();
 
     //display id
     fill(textColor);
     textSize(bodyTextSize);
+    textAlign(LEFT);
+    text("SceneId: "+gameUserData[count].sceneId, width*.05, 0.35*height);
+
     textAlign(RIGHT);
-    text("SceneId: "+gameUserData[count].sceneId, width*.9, 0.3*height);
-    console.log(gameUserData[count].sceneId);
+    text("YourScore (0-1): "+userScoreScaled.toString(), width*.95, 0.35*height);
+
+
+    //display heatmap mode
+    textAlign(CENTER);
+    if (heatMapMode=='bayes'){
+      text("Heatmap Mode: Bayesian Model", width*.5, 0.35*height);
+    }
+    else if (heatMapMode=='freq'){
+      text("Heatmap Mode: Number of seats nearest to", width*.5, 0.35*height);
+    }
+    else if (heatMapMode=='dist'){
+      text("Heatmap Mode: Distance to nearest co-passenger", width*.5, 0.35*height);
+    }
+    else if (heatMapMode=='door'){
+      text("Heatmap Mode: Proximity to nearest Door", width*.5, 0.35*height);
+    }
+    //text("Score: "+getScore(mouseX-xOffset, mouseY-yOffset).toString(), width*.9, 0.3*height);
+    //console.log(gameUserData[count].sceneId);
+
+    //display legend:
+    fill(textColor);
+    textSize(bodyTextSize);
+    textAlign(LEFT);
+    text("     Controls\n\n<ENTER>: Next Scene\n<p>    : Previous Scene\n<h>    : Toggle Heatmap Modes\n<u>    : Toggle past user data\n<q>    : Quit", width*.425, 0.7*height);
+
 
     //display freq
     fill(0);
@@ -208,12 +256,13 @@ function mouseClicked() {
     
     count = count+1;
 
-    if (count>=sceneData.getRowCount()-1) {
+    if (count>sceneData.getRowCount()-1) {
       thankYou();
     }
     if (count<sceneData.getRowCount()) {
       //compute allPointFreqs
-      //allPointScore = getAllScore();
+      allPointScore = getAllScore();
+      console.log(allPointScore.reduce((a, b) => { return Math.max(a, b) }));
       //compute modelPoint
       //pointsModel = getModelPoint();
     }
@@ -239,6 +288,10 @@ function thankYou() {
   textSize(50);
   textAlign(CENTER);
   text("Thank You!", width/2, height/2);
+
+  remove();
+
+  window.location.href = "/exit";
 }
 
 function keyPressed() {
@@ -251,8 +304,15 @@ function keyPressed() {
       incomingObjs = getData('getgamedata?gameId='+resultGameId).then((incomingObjs) => {
         gameUserData = incomingObjs.gameUserData
 
+        //compute allPointFreqs
+        allPointScore = getAllScore();
+        //compute modelPoint
+        //pointsModel = getModelPoint();
+
         //set gameOn = true
         gameOn = true;
+
+
       }); 
 
       //read allUserData
@@ -270,12 +330,7 @@ function keyPressed() {
       }
 
 
-      //compute allPointFreqs
-      //print ('reached before allpscore');
-      //allPointScore = getAllScore();
-      //print (allPointScore);
-      //compute modelPoint
-      //pointsModel = getModelPoint();
+
     } else if (key =='Backspace'){
       resultGameId = resultGameId.slice(0,-1);      
     } else if (key =='Shift'){
@@ -289,7 +344,7 @@ function keyPressed() {
     if (count>0) {
       count=count-1;
       //compute allPointFreqs
-      //allPointScore = getAllScore();
+      allPointScore = getAllScore();
       //compute modelPoint
       //pointsModel = getModelPoint();
 
@@ -306,11 +361,27 @@ function keyPressed() {
       console.log(gameUserData[0].sceneId);
     }
   } else if (key=='h') {
-    if (plotHeatMap) {
+    /*if (plotHeatMap) {
       plotHeatMap = false;
     } else {
-      plotHeatMap = true;
-    }
+      plotHeatMap = true;*/
+      if (heatMapMode=='bayes'){
+        heatMapMode='freq';
+        allPointScore = getAllScore();
+      }
+      else if (heatMapMode=='freq'){
+        heatMapMode='dist';
+        allPointScore = getAllScore();
+      }
+      else if (heatMapMode=='dist'){
+        heatMapMode='door';
+        allPointScore = getAllScore();
+      }
+      else if (heatMapMode=='door'){
+        heatMapMode='bayes';
+        allPointScore = getAllScore();
+      }
+
   } else if (key=='u') {
     if (plotUserPoints) {
       plotUserPoints = false;
@@ -323,13 +394,15 @@ function keyPressed() {
     } else {
       plotModelPoints = true;
     }
+  }else if (key=='q'){
+    thankYou();
   }
 }
 
 
 function getScore(xPoint, yPoint) {
-  //print(allUserData.columns);
-  let row = allUserData.getRow(count);
+
+  let row = sceneData.getRow(count);
 
   //populate players and competitors array
   compX = row.getString("compX");
@@ -353,7 +426,6 @@ function getScore(xPoint, yPoint) {
   //players[nPlayers-1][0] = xPoint;
   //players[nPlayers-1][1] = yPoint;
   players.push([xPoint,yPoint]);
-  ellipse(mouseX, mouseY, agentSize, agentSize);
 
   //populate seats array
   seatX = row.getString("seatX");
@@ -442,6 +514,28 @@ function getScore(xPoint, yPoint) {
   doorScore = plan.width/doorDistMin;
 
 
+  //compute score from 3 params
+
+  if (heatMapMode=='bayes'){
+    freqWeight = 2;
+    distWeight = .75;
+    doorWeight = .25;
+  }
+  else if (heatMapMode=='freq'){
+    freqWeight = 1;
+    distWeight = 0;
+    doorWeight = 0;
+  }
+  else if (heatMapMode=='dist'){
+    freqWeight = 0;
+    distWeight = 1;
+    doorWeight = 0;
+  }
+  else if (heatMapMode=='door'){
+    freqWeight = 0;
+    distWeight = 0;
+    doorWeight = 1;
+  }
 
   //float score = freqScore;
   //float score = 4*freqScore*distScore;
@@ -452,13 +546,15 @@ function getScore(xPoint, yPoint) {
 }
 
 function getAllScore() {
-  allPointScore1 = new Array(width*height);
+  allPointScore = new Array(width*height);
   for (x = xOffset; x<xOffset+plan.width; x=x+step) {
     for (y = yOffset+seatOffset; y<yOffset+plan.height-seatOffset; y = y+step) {
-      allPointScore1[x+(y*width)] = getScore(x-xOffset, y-yOffset);
+      allPointScore[x+(y*width)] = getScore(x-xOffset, y-yOffset);
     }
   }
-  return allPointScore1;
+  userScore = getScore(int(gameUserData[count].userX),int(gameUserData[count].userY));
+  userScoreScaled = (userScore/(allPointScore.reduce((a, b) => { return Math.max(a, b) }))).toFixed(2);
+  return allPointScore;
 }
 
 function getModelPoint() {
@@ -490,15 +586,17 @@ function drawHeatMap() {
   // create heatmap
   noStroke();
   //pointScoreMax = max(allPointScore);
-  pointScoreMax = Math.max.apply(null, allPointScore);
+  //pointScoreMax = Math.max.apply(null, allPointScore);
+  pointScoreMax = allPointScore.reduce((a, b) => { return Math.max(a, b) })
   // Loop through every point in steps
   for (x = xOffset; x<xOffset+plan.width; x = x+step) {
     for (y = yOffset+seatOffset; y<yOffset+plan.height-seatOffset; y=y+step) {
       pointScore = allPointScore[x+(y*width)];
       pointScoreScaled =.5*pointScore/pointScoreMax;
-      //float gradient = 255-((pointScore)*255);
-      gradient = 255-((pointScoreScaled)*255);
-      c = color(255, gradient, gradient);
+      //gradient = 255-((pointScoreScaled)*255);
+      gradient = (pointScoreScaled)*255;
+      //c = color(255, gradient, gradient);
+      c = color(0, 0, gradient);
       fill(c);
       rectMode(CENTER);
       rect(x, y, step+1, step+1);

@@ -44,6 +44,12 @@ let closestSeats = [];
 let allPointScore;
 let pointsModel = [];
 
+let compColor = 200;
+let agentColor = 'red';
+let textColor = 255;
+let titleTextSize = 40;
+let bodyTextSize = 20;
+
 function preload (){
 
   plan = loadImage("assets/plan_1.png");
@@ -55,7 +61,7 @@ function preload (){
 
 function setup()
 {
-  createCanvas(1530, 800);
+  createCanvas(1530, 850);
   back = loadImage("assets/back.png");
   background(255);
   xOffset = (width/2)-(plan.width/2);
@@ -74,20 +80,20 @@ function draw()
     image(back, width/2, height/2);
     //display title
     textFont("Courier New");
-    fill(0);
-    textSize(50);
+    fill(textColor);
+    textSize(titleTextSize);
     textAlign(CENTER);
-    text("The Subway Game!", width/2, 0.1*height);
+    text("Where Would You Stand On The Subway?", width/2, 0.1*height);
 
     //display intro
-    fill(0);
-    textSize(25);
+    fill(textColor);
+    textSize(bodyTextSize);
     textAlign(CENTER);
-    text("Now let's see how predictable your decisions were!\nHit Enter to continue...", width/2, 0.3*height);
+    text("Great! Now let's see how predictable (and 'rational') your decisions were!\n \n Hit Enter to continue...", width/2, 0.2*height);
 
     //display name
-    fill(0);
-    textSize(30);
+    fill(textColor);
+    textSize(bodyTextSize);
     textAlign(CENTER);
     text(resultGameId, width/2, 0.6*height);
   }
@@ -106,16 +112,16 @@ function draw()
     image(plan, xOffset, yOffset);
 
     //display title
-    fill(0);
-    textSize(50);
+    fill(textColor);
+    textSize(titleTextSize);
     textAlign(CENTER);
-    text("The Subway Game!", width/2, 0.1*height);
+    text("Where Would You Stand on the Subway?", width/2, 0.1*height);
 
     //display intro
-    fill(0);
-    textSize(25);
+    fill(textColor);
+    textSize(bodyTextSize);
     textAlign(CENTER);
-    text("Take a look at how your choices compared with past players", width/2, 0.2*height);
+    text("Take a look at how your choices compared with past players. \n The heatmap indicates areas which actually correspond to high chances of getting a seat", width/2, 0.2*height);
 
     //create heatmap
     if (plotHeatMap) {
@@ -134,7 +140,7 @@ function draw()
     row = sceneData.getRow(count);
 
     //draw compPoints
-    fill(50);
+    fill(compColor);
     compX = row.getString("compX");
     compY = row.getString("compY");
     nComp = row.getNum("nComp");
@@ -147,7 +153,7 @@ function draw()
     }
 
     //draw seatPoints
-    fill(50);
+    fill(compColor);
     seatX = row.getString("seatX");
     seatY = row.getString("seatY");
     nSeats = row.getNum("nSeats");
@@ -160,9 +166,10 @@ function draw()
   
     //draw allUserPoints
     if (plotUserPoints) {
-      fill(255, 240, 240);
+      fill(70, 0, 0);
       //noFill();
-      stroke(255, 0, 0);
+      noStroke();
+      //stroke(255, 0, 0);
 
       for (i = 0; i < userXList.length; i++) {
         ellipse(int(userXList[i])+xOffset, int(userYList[i])+yOffset, agentSize, agentSize);
@@ -172,16 +179,16 @@ function draw()
 
     //draw thisUserPoints
 
-      fill(0, 0, 255);
-      stroke(0, 0, 255);
+      fill(agentColor);
+      stroke(agentColor);
 
       ellipse(int(gameUserData[count].userX)+xOffset, int(gameUserData[count].userY)+yOffset, agentSize, agentSize);
 
       noStroke();
 
     //display id
-    fill(0);
-    textSize(25);
+    fill(textColor);
+    textSize(bodyTextSize);
     textAlign(RIGHT);
     text("SceneId: "+gameUserData[count].sceneId, width*.9, 0.3*height);
     console.log(gameUserData[count].sceneId);

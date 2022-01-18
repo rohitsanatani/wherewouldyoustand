@@ -28,8 +28,15 @@ let seatX;
 let seatY;
 let rowList = [];
 let rowN;
+let randomRow = 10;
 let startTime;
 let timer = 10;
+
+let compColor = 200;
+let agentColor = 'red';
+let textColor = 255;
+let titleTextSize = 40;
+let bodyTextSize = 20;
 
 let sceneIdData = [];
 let sceneCountData = [];
@@ -56,7 +63,7 @@ function preload (){
 function setup()
 {
   //fullScreen();
-  createCanvas(1530, 800);
+  createCanvas(1530, 850);
   back = loadImage("assets/back.png");
   background(255);
 
@@ -108,17 +115,17 @@ function draw()
     //display title
     //myFont = createFont("consolas", 32);
     textFont("Courier New");
-    fill(0);
-    textSize(50);
+    fill(textColor);
+    textSize(titleTextSize);
     textAlign(CENTER);
-    text("The Subway Game!", width/2, 0.1*height);
+    text("Where Would You Stand On The Subway?", width/2, 0.1*height);
 
     //display intro
-    fill(0);
-    textSize(25);
+    fill(textColor);
+    textSize(bodyTextSize);
     textAlign(CENTER);
     text("You enter a subway coach, tired after a hard day's work. All seats are occupied.\n Where would want to stand, so you could grab a seat soon?", width/2, 0.2*height);
-
+    text("You will be presented with multiple co-passenger configurations. \n For each scene, click on your preffered standing position anywhere within the coach.", width/2, 0.3*height);
     //draw plan
     imageMode(CORNER);
     image(plan, xOffset, yOffset);
@@ -126,7 +133,7 @@ function draw()
     let row = gameData.getRow(rowN);
 
     //draw seatPoints
-    fill(50);
+    fill(compColor);
     seatX = row.getString("seatX");
     seatY = row.getString("seatY");
     nSeats = row.getNum("nSeats");
@@ -137,17 +144,35 @@ function draw()
       ellipse(int(seatXList[i])+xOffset, int(seatYList[i])+yOffset, agentSize, agentSize);
     }
 
+    //draw compPoints
+    let compRow = gameData.getRow(randomRow);
+    fill(compColor);
+    compX = compRow.getString("compX");
+    compY = compRow.getString("compY");
+    nComp = compRow.getNum("nComp");
+    compXList = compX.split(";", nComp);
+    compYList = compY.split(";", nComp);
+
+    for (i = 0; i < nComp; i++) {
+      ellipse(int(compXList[i])+xOffset, int(compYList[i])+yOffset, agentSize, agentSize);
+    }
+
+//update randomRow every 60 frames
+    if(frameCount%60==0){
+      randomRow = Math.floor(random(0,gameData.getRowCount()));
+    }
+
     //display name prompt
-    fill(0);
-    textSize(30);
+    fill(textColor);
+    textSize(bodyTextSize);
     textAlign(CENTER);
-    text("To begin, type your name and hit Enter", width/2, 0.8*height);
+    text("To begin, type your name and hit Enter", width/2, 0.7*height);
 
     //display name
-    fill(0);
-    textSize(30);
+    fill(textColor);
+    textSize(bodyTextSize);
     textAlign(CENTER);
-    text(userName, width/2, 0.9*height);
+    text(userName, width/2, 0.8*height);
   }
 
   //mainLoop
@@ -162,25 +187,25 @@ function draw()
     image(plan, xOffset, yOffset);
 
     //display title
-    fill(0);
-    textSize(50);
+    fill(textColor);
+    textSize(titleTextSize);
     textAlign(CENTER);
-    text("The Subway Game!", width/2, 0.1*height);
+    text("Where Would You Stand On The Subway?", width/2, 0.1*height);
 
 
     //display intro
-    fill(0);
-    textSize(25);
+    fill(textColor);
+    textSize(bodyTextSize);
     textAlign(CENTER);
     text("Each of the images below depict a configuration of co-passengers in your subway coach. \n\n Click on the position where you would want to stand to maximize your chances of getting a seat.", width/2, 0.2*height);
 
 
     //display time prompt
-    fill(0);
+    fill(textColor);
     if (timer-((millis()-startTime)/1000)<=3) {
-      fill(255, 0, 0);
+      fill('red');
     }
-    textSize(25);
+    textSize(bodyTextSize);
     textAlign(CENTER);
     remTime = timer-(millis()-startTime)/1000;
     text("Do not give yourself more than 10s per image. \n Time remaining: "+Math.ceil(remTime).toString(), width/2, 0.75*height);
@@ -190,7 +215,7 @@ function draw()
     text((count+1).toString()+" / "+ (gameData.getRowCount().toString()), width/2, 0.9*height);
 
     //draw cursor
-    fill(255, 0, 0);
+    fill(agentColor);
     noStroke();
     ellipse(mouseX, mouseY, agentSize, agentSize);
 
@@ -205,7 +230,7 @@ function draw()
     //print (gameData.getRowCount()-1);
 
     //draw compPoints
-    fill(50);
+    fill(compColor);
     compX = row.getString("compX");
     compY = row.getString("compY");
     nComp = row.getNum("nComp");
@@ -217,7 +242,7 @@ function draw()
     }
 
     //draw seatPoints
-    fill(50);
+    fill(compColor);
     seatX = row.getString("seatX");
     seatY = row.getString("seatY");
     nSeats = row.getNum("nSeats");
@@ -349,10 +374,13 @@ function thankYou() {
 function keyPressed() {
   if (!gameOn) {
     if (key=='Enter') {
-      gameOn = true;
-      startTime = millis();
-      gameId = userName+hour().toString()+minute().toString()+second().toString();
-      introSound.play();
+      if(userName.length>0){
+        gameOn = true;
+        startTime = millis();
+        gameId = userName+hour().toString()+minute().toString()+second().toString();
+        introSound.play();
+      }
+
     } else if (key =='Backspace'){
       userName = userName.slice(0,-1);      
     } else if (key =='Shift'){

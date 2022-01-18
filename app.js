@@ -30,7 +30,8 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.redirect('/play');
+  //res.redirect('/play');
+  res.render('intro', {title: 'Where Would You Stand???' });
 });
 
 app.get('/play', (req, res) => {

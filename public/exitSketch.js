@@ -49,6 +49,13 @@ function setup()
   agentY = 60;
   stepX = 2;
   stepY = 0;
+
+  let linkArticle = createA('http://rohitsanatani.com/wp/2021/02/24/seating-probability-analysis/', 'Read more on this topic here.');
+  linkArticle.position(0.4*width, 0.75*height);
+  linkArticle.style('color', 'white');
+	linkArticle.style('font-size', '20px');
+	linkArticle.style('font-family', 'Courier New');
+  //linkArticle.style('text-align', 'left');
 }
 
 function draw()
@@ -72,10 +79,13 @@ function draw()
     fill(textColor);
     textFont("Courier New");
     textStyle(NORMAL);
-    textSize(25);
+    textSize(20);
     textAlign(CENTER);
-    text("From a 'rational' point of view, your chances of getting a seat depends most strongly on\nthe number of seats you are closest to (S).\n\nHowever in real life, our decisions are dictated by (P) and (D) as well.", width/2, 0.3*height);
-    text("Hopefully this'll make us reflect on our intuitive decisions \nthe next time we are on the subway!", width/2, 0.6*height);
+    text("So there. That was a sneak peak into the into the various parameters that \ninfluence our intuitive positioning choices. ", width/2, 0.2*height);
+    text("From a 'rational' point of view, your chances of getting a seat depends most strongly on\nthe number of seats you are closest to (S).\n\nHowever in real life, we tend to maximize our distances from our co-paasengers (P)\n and also often keep in mind the positions of doors (D).", width/2, 0.3*height);
+    text("Hopefully this'll make us reflect on our intuitive decisions \nthe next time we are on the subway!", width/2, 0.55*height);
+
+
 
     //display intro
     fill(textColor);

@@ -71,7 +71,7 @@ function setup()
   
   //check display resolution and alert user
   if(windowWidth<width){
-    window.alert("Your browser resolution is less than the suggested game resolution.\nPlease zoom out within your browser for the best experience");
+    window.alert("Your browser resolution is less than the suggested game resolution.\nPlease zoom out within your browser to fit page to screen");
   }
 
   xOffset = (width/2)-(plan.width/2);

@@ -78,7 +78,7 @@ function setup()
 
   //check display resolution and alert user
   if(windowWidth<width){
-    window.alert("Your browser resolution is less than the suggested game resolution.\nPlease zoom out within your browser for the best experience");
+    window.alert("Your browser resolution is less than the suggested game resolution.\nPlease zoom out within your browser to fit page to screen");
   }
 
   xOffset = (width/2)-(plan.width/2);
@@ -149,7 +149,7 @@ function draw()
     fill(textColor);
     textSize(bodyTextSize);
     textAlign(CENTER);
-    text("Take a look at how rational your decisions were!\n Toggle the different heatmap modes to evaluate your decisions (Key h). \n Also compare your positioning choices with data from past players. (Key u)", width/2, 0.2*height);
+    text("Take a look at how rational your decisions were!\n Toggle the different heatmap modes to evaluate your decisions (<h>). \n Also compare your positioning choices with data from past players (<u>).", width/2, 0.2*height);
 
     //create heatmap
     if (plotHeatMap) {
@@ -230,13 +230,13 @@ function draw()
       text("Heatmap Mode: Bayesian Model", width*.5, 0.35*height);
     }
     else if (heatMapMode=='freq'){
-      text("Heatmap Mode: Number of seats nearest to", width*.5, 0.35*height);
+      text("Heatmap Mode: Number of seats nearest to (S)", width*.5, 0.35*height);
     }
     else if (heatMapMode=='dist'){
-      text("Heatmap Mode: Distance to nearest co-passenger", width*.5, 0.35*height);
+      text("Heatmap Mode: Distance to nearest co-passenger (P)", width*.5, 0.35*height);
     }
     else if (heatMapMode=='door'){
-      text("Heatmap Mode: Proximity to nearest Door", width*.5, 0.35*height);
+      text("Heatmap Mode: Proximity to nearest Door (D)", width*.5, 0.35*height);
     }
     //text("Score: "+getScore(mouseX-xOffset, mouseY-yOffset).toString(), width*.9, 0.3*height);
     //console.log(gameUserData[count].sceneId);
@@ -601,9 +601,21 @@ function drawHeatMap() {
       pointScore = allPointScore[x+(y*width)];
       pointScoreScaled =.5*pointScore/pointScoreMax;
       //gradient = 255-((pointScoreScaled)*255);
-      gradient = (pointScoreScaled)*255;
       //c = color(255, gradient, gradient);
-      c = color(0, 0, gradient);
+      gradient = (pointScoreScaled)*255;
+      if (heatMapMode=='bayes'){
+        c = color(gradient, 0, gradient);
+      }
+      else if (heatMapMode=='freq'){
+        c = color(0, 0, gradient);
+      }
+      else if (heatMapMode=='dist'){
+        c = color(gradient, gradient, 0);
+      }
+      else if (heatMapMode=='door'){
+        c = color(0, gradient, 0);
+      }
+
       fill(c);
       rectMode(CENTER);
       rect(x, y, step+1, step+1);

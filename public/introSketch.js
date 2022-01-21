@@ -26,6 +26,7 @@ let textColor = 255;
 let accentColor = '#ff4040'
 let titleTextSize = 40;
 let bodyTextSize = 20;
+let actionTextSize = 30;
 
 function preload (){
   
@@ -37,9 +38,16 @@ function preload (){
 
 function setup()
 {
+
   createCanvas(1530, 850);
+  //createCanvas(windowWidth, windowHeight);
   back = loadImage("assets/back.png");
   background(255);
+
+  //check display resolution and alert user
+  if(windowWidth<width){
+    window.alert("Your browser resolution is less than the suggested game resolution.\nPlease zoom out within your browser for the best experience");
+  }
 
   xOffset = (width/2)-(plan.width/2);
   yOffset = (height/2)-(plan.height/2);
@@ -74,10 +82,11 @@ function draw()
     fill(textColor);
     textSize(bodyTextSize);
     textAlign(CENTER);
-    text("When was the last time you walked into a crowded subway coach, tired after a long day, and \n lost a seat to someone who was more strategically positioned? \n\n Well, turns out, we seldom make the most rational decisions in this regard.", width/2, 0.2*height);
-    text("Play this quick game to find out why, and how predictable your intuitive decisions are!", width/2, 0.75*height);
+    text("When was the last time you walked into a crowded subway coach, tired after a long day, and \n lost a seat to someone who was more strategically positioned? \n\n Well, turns out, we seldom make the most rational decisions in this regard.\nPlay this quick game to find out why, and how predictable your intuitive decisions are!", width/2, 0.2*height);
+    //text("Play this quick game to find out why, and how predictable your intuitive decisions are!", width/2, 0.75*height);
+    textSize(bodyTextSize);
     fill(accentColor);
-    text(" Hit 'ENTER' to proceed", width/2, 0.85*height);
+    text(" Hit 'ENTER' to proceed", width/2, 0.8*height);
     row = gameData.getRow(demoRow);
 
     //draw compPoints

@@ -26,6 +26,7 @@ let textColor = 255;
 let accentColor = '#ff4040'
 let titleTextSize = 40;
 let bodyTextSize = 20;
+let actionTextSize = 30;
 
 function preload (){
   

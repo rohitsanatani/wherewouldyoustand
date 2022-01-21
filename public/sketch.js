@@ -38,6 +38,7 @@ let textColor = 255;
 let accentColor = '#ff4040'
 let titleTextSize = 40;
 let bodyTextSize = 20;
+let actionTextSize = 30;
 
 let sceneIdData = [];
 let sceneCountData = [];
@@ -67,6 +68,11 @@ function setup()
   createCanvas(1530, 850);
   back = loadImage("assets/back.png");
   background(255);
+  
+  //check display resolution and alert user
+  if(windowWidth<width){
+    window.alert("Your browser resolution is less than the suggested game resolution.\nPlease zoom out within your browser for the best experience");
+  }
 
   xOffset = (width/2)-(plan.width/2);
   yOffset = (height/2)-(plan.height/2);
@@ -199,7 +205,7 @@ function draw()
     fill(textColor);
     textSize(bodyTextSize);
     textAlign(CENTER);
-    text("Each of the images below depict a configuration of co-passengers in your subway coach. \n\n Click on the position where you would want to stand to maximize your chances of getting a seat.", width/2, 0.2*height);
+    text("Each of the images below depict a configuration of co-passengers in your subway coach. \n\n Click on the position where you would want to stand to maximize your chances of getting a seat.\n The next scene will load automatically after each click.", width/2, 0.2*height);
 
 
     //display time prompt

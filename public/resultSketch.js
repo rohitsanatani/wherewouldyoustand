@@ -51,6 +51,7 @@ let textColor = 255;
 let accentColor = '#ff4040'
 let titleTextSize = 40;
 let bodyTextSize = 20;
+let actionTextSize = 30;
 
 let heatMapMode;
 
@@ -69,11 +70,17 @@ function setup()
   freqWeight = 2;
   distWeight = .75;
   doorWeight = .25;
-  heatMapMode = 'bayes';
+  heatMapMode = 'freq';
 
   createCanvas(1530, 850);
   back = loadImage("assets/back.png");
   background(255);
+
+  //check display resolution and alert user
+  if(windowWidth<width){
+    window.alert("Your browser resolution is less than the suggested game resolution.\nPlease zoom out within your browser for the best experience");
+  }
+
   xOffset = (width/2)-(plan.width/2);
   yOffset = (height/2-plan.height/2);
 
@@ -99,18 +106,18 @@ function draw()
     fill(textColor);
     textSize(bodyTextSize);
     textAlign(CENTER);
-    text("Great! Now let's see how predictable (and 'rational') your decisions were!\n\nBased on past data, 3 parameters have been found to influence positioning choices:\n\nNumber of seats closest to (S)\nDistance from nearest co-passenger (P)\nProximity to nearest door (D)", width/2, 0.175*height);
+    text("Great! Now let's see how rational (and predictable) your decisions were!\n\nLogically, your chances of getting a seat depends on the number of seats (S) that you are closest to.\n Because you would want to be the first one there as soon as a seat gets vacant.\n\nHowever, based on past data, the following parameters also influence positioning choices:\n\nDistance from nearest co-passenger (P)\nProximity to nearest door (D)", width/2, 0.175*height);
 
     //draw plan
     imageMode(CENTER);
-    image(paramPlan, width/2, height/2);
+    image(paramPlan, width/2, 0.55*height);
 
     //display name
     fill(textColor);
     textSize(bodyTextSize);
     textAlign(CENTER);
     //text("From a 'rational' point of view, your chances of getting a seat depends most strongly on\nthe number of seats you are closest to (S).\nHowever in real life, our decisions are dictated by (P) and (D) as well.\n\nIn the following section, you will be able to evaluate your choices against each of these parameters.\nIn additon, we have also constructed a model based on past data.", width/2, 0.65*height);
-    text("In the following section, you will be able to evaluate your choices against each of these parameters.\nIn additon, we have also constructed a model based on past data.", width/2, 0.7*height);
+    text("In the following section, you will be able to evaluate your choices against each of these parameters.\nIn additon, we have also constructed a predictive model based on past data.", width/2, 0.7*height);
 
     //display name
     fill(accentColor);
@@ -142,7 +149,7 @@ function draw()
     fill(textColor);
     textSize(bodyTextSize);
     textAlign(CENTER);
-    text("Toggle the different heatmap modes to evaluate your decisions! \n Also compare your positioning choices with data from past players.", width/2, 0.2*height);
+    text("Take a look at how rational your decisions were!\n Toggle the different heatmap modes to evaluate your decisions (Key h). \n Also compare your positioning choices with data from past players. (Key u)", width/2, 0.2*height);
 
     //create heatmap
     if (plotHeatMap) {
